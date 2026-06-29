@@ -1,0 +1,8 @@
+version: v1
+name: buf.build/byronwade/dcp
+breaking:
+  use:
+    - FILE
+lint:
+  use:
+    - DEFAULT
