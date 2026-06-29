@@ -5,8 +5,9 @@
 | Doc ID | `dcp-vision-rev` |
 | Category | Vision |
 | Status | draft |
-| Version | 0.1.0-draft |
+| Version | 0.2.0-draft |
 | Created | 2026-06-28 |
+| Last major update | 2026-06-28 |
 
 ---
 
@@ -42,12 +43,33 @@ We want developers to experience domain-level changes as **instant, safe, and pr
 
 ---
 
-## Differentiation
+## Differentiation from Existing Platforms
 
-- Not just "domains on Workers" — a full control plane that makes domains programmable with safety and speed as first-class concerns.
-- Better integration between routing, compute, and state than current edge platforms.
-- Stronger emphasis on instant reversibility and provenance.
+DCP is not "Cloudflare Workers with some extra orchestration" or "Vercel Edge Functions for domains."
+
+| Aspect | Typical Approach (Cloudflare / Vercel) | DCP Approach | Why It Feels Different |
+|--------|---------------------------------------|--------------|------------------------|
+| **Domain Model** | Domains/zones are mostly routing targets | Domains are programmable units with integrated routing + compute + state | Feels like a new primitive |
+| **Versioning & Rollback** | Often manual or slow | Atomic, instant, and built into the core model | True fearlessness when shipping |
+| **Safety** | Policy is often separate or after-the-fact | Safety (policy + provenance) is core to every change | Speed without constant fear |
+| **State** | Usually managed separately | Native Domain State Primitives tightly integrated | Powerful patterns without extra complexity |
+| **Liability** | You run on their infrastructure | You get their performance while DCP handles intelligent orchestration and safety | Best of both worlds |
+| **Developer Experience** | Excellent for compute, weaker for domain lifecycle | Excellent across the full domain lifecycle | End-to-end joy for domain operations |
+
+**Bottom line**: DCP combines the raw performance of the best edge platforms with a domain-native programming model, strong safety guarantees, and instant reversibility.
 
 ---
 
-*This document captures the ambitious vision for what DCP should feel like to developers.*
+## Summary
+
+DCP aims to make domain operations feel revolutionary by delivering:
+- Noticeably faster and more predictable speed
+- Deep, integrated programmability at the domain level
+- Strong safety without slowing developers down
+- High performance with reduced operational liability
+
+This combination is what we believe can create a new category in developer infrastructure.
+
+---
+
+*Version 0.2.0 — Added strong differentiation section.*
