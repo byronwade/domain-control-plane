@@ -1,0 +1,111 @@
+syntax = "proto3";
+
+package dcp.v1;
+
+option go_package = "github.com/byronwade/dcp/proto/dcp/v1";
+option java_package = "com.byronwade.dcp.v1";
+
+// Core routing and bundle messages for the DCP Route Runtime.
+// These power the extreme speed hot path (delta push, version pointers, DNS-free routing).
+
+message RouteConfigBundle {
+  uint64 bundle_version = 1;           // Monotonic per domain / wildcard group
+  string domain = 2;                     // Primary domain or wildcard pattern (e.g. "*.api.example.com")
+  google.protobuf.Timestamp effective_at = 3;
+  google.protobuf.Timestamp expires_at = 4;
+
+  repeated Route routes = 5;
+  TLSConfig tls = 6;
+  repeated HeaderAction header_actions = 7;
+  repeated PolicyRef policies = 8;
+
+  string signature = 9;                  // Ed25519 signature over canonical bundle
+  string previous_bundle_hash = 10;
+  string compiler_version = 11;
+  string intent_hash = 12;               // Hash of the original user intent
+}
+
+message Route {
+  Match match = 1;
+  Backend backend = 2;
+  uint32 weight = 3;
+  repeated HeaderAction header_actions = 4;
+  HealthCheck health_check = 5;
+}
+
+message Match {
+  string path_prefix = 1;
+  string host = 2;
+  map<string, string> headers = 3;
+  string method = 4;
+}
+
+message Backend {
+  string url = 1;                        // Preferably pre-resolved literal IP
+  string name = 2;
+  bool tls = 3;
+  uint32 connect_timeout_ms = 4;
+  uint32 request_timeout_ms = 5;
+}
+
+message TLSConfig {
+  string cert_id = 1;
+  string min_version = 2;                // "1.2" or "1.3"
+  HSTS hsts = 3;
+  bool mtls_required = 4;
+}
+
+message HSTS {
+  uint32 max_age = 1;
+  bool include_subdomains = 2;
+  bool preload = 3;
+}
+
+message HeaderAction {
+  string name = 1;
+  string value = 2;
+  enum Action {
+    SET = 0;
+    APPEND = 1;
+    REMOVE = 2;
+  }
+  Action action = 3;
+}
+
+message PolicyRef {
+  string policy_id = 1;                  // Cedar or OPA policy reference
+  string version = 2;
+}
+
+message HealthCheck {
+  uint32 interval_ms = 1;
+  string path = 2;
+  uint32 healthy_threshold = 3;
+  uint32 unhealthy_threshold = 4;
+}
+
+// Delta for efficient P0 hot path updates
+message RouteConfigDelta {
+  uint64 base_version = 1;
+  uint64 new_version = 2;
+  repeated RouteDelta route_deltas = 3;
+  TLSConfigDelta tls_delta = 4;
+  repeated HeaderDelta header_deltas = 5;
+}
+
+message RouteDelta {
+  enum Op { ADD = 0; UPDATE = 1; REMOVE = 2; }
+  Op op = 1;
+  Route route = 2;
+  string route_id = 3;                   // Used for UPDATE / REMOVE
+}
+
+message TLSConfigDelta {
+  // Similar structure for partial TLS updates
+  TLSConfig tls = 1;
+}
+
+message HeaderDelta {
+  HeaderAction action = 1;
+  string header_name = 2;
+}
