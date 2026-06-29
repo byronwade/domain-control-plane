@@ -1,0 +1,22 @@
+[workspace]
+members = [
+    "crates/dcp-types",
+    "crates/dcp-cli",
+    "crates/dcpd",
+    "crates/dcp-api",
+    "crates/dcp-compiler",
+    "crates/dcp-kernel-fast",
+    "crates/dcp-kernel-full",
+    "crates/dcp-edge-agent",
+    "crates/dcp-dns",
+]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/byronwade/domain-control-plane"
+
+[workspace.dependencies]
+# Common dependencies will go here as we build
